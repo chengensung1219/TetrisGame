@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -5,9 +6,11 @@ public class Blocks {
 
     String type;
     List<Pair> currentShape;
-
-    int currentDirection;
+    Color color;
     List<String> blockType = List.of("I", "J", "O", "T", "Z", "L", "S");
+
+    List<Pair> baseBlocks = new ArrayList<>();
+
     List<Pair> Ishape = List.of(new Pair(13, -1), new Pair(13, 0), new Pair(13, 1), new Pair(13, 2));
     List<Pair> Oshape = List.of(new Pair(13, 1), new Pair(13, 2), new Pair(14, 1), new Pair(14, 2));
     List<Pair> Jshape = List.of(new Pair(13, 0), new Pair(13, 1), new Pair(13, 2), new Pair(12, 2));
@@ -19,32 +22,47 @@ public class Blocks {
     public Blocks() {
         this.type = getRandomType();
         this.currentShape = getShape(this.type);
-        this.currentDirection = 0;
+
     }
     public String getRandomType(){
         int randomIndex = (int)(Math.random() * blockType.size());
         return blockType.get(randomIndex);
-    };
+    }
+
+    public List<Pair> getNewShape(){
+        Blocks blocks = new Blocks();
+        return blocks.currentShape;
+    }
+
     public List<Pair> getShape(String type) {
         switch (type){
             case "I":
+                this.color = Color.GREEN;
                 return Ishape;
             case "J":
+                this.color = Color.CYAN;
                 return Jshape;
             case "O":
+                this.color = Color.ORANGE;
                 return Oshape;
             case "T":
+                this.color = Color.RED;
                 return Tshape;
             case "Z":
+                this.color = Color.YELLOW;
                 return Zshape;
             case "L":
+                this.color = Color.PINK;
                 return Lshape;
             case "S":
+                this.color = Color.BLUE;
                 return Sshape;
             default:
                 return null;
         }
     }
+
+
     public List<Pair> Rotate() {
         if (type.equals("O"))
             return currentShape;
