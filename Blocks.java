@@ -4,24 +4,32 @@ import java.util.ArrayList;
 
 public class Blocks {
 
-    String type;
+    String currentType;
+    String nextType;
     List<Pair> currentShape;
-    Color color;
+    List<Pair> nextShape;
+    Color currentColor;
+    Color nextColor;
     List<String> blockType = List.of("I", "J", "O", "T", "Z", "L", "S");
-
     List<Pair> baseBlocks = new ArrayList<>();
-
-    List<Pair> Ishape = List.of(new Pair(13, -1), new Pair(13, 0), new Pair(13, 1), new Pair(13, 2));
-    List<Pair> Oshape = List.of(new Pair(13, 1), new Pair(13, 2), new Pair(14, 1), new Pair(14, 2));
-    List<Pair> Jshape = List.of(new Pair(13, 0), new Pair(13, 1), new Pair(13, 2), new Pair(12, 2));
-    List<Pair> Lshape = List.of(new Pair(13, 0), new Pair(13, 1), new Pair(13, 2), new Pair(14, 2));
-    List<Pair> Tshape = List.of(new Pair(13, 1), new Pair(14, 1), new Pair(15, 1), new Pair(14, 2));
-    List<Pair> Zshape = List.of(new Pair(12, 1), new Pair(13, 1), new Pair(13, 2), new Pair(14, 2));
-    List<Pair> Sshape = List.of(new Pair(14, 1), new Pair(13, 1), new Pair(13, 2), new Pair(12, 2));
+    List<Pair> Ishape = List.of(new Pair(6, 2), new Pair(7, 2), new Pair(8, 2), new Pair(9, 2));
+    List<Pair> Oshape = List.of(new Pair(7, 1), new Pair(7, 2), new Pair(8, 1), new Pair(8, 2));
+    List<Pair> Jshape = List.of(new Pair(8, 1), new Pair(8, 2), new Pair(8, 3), new Pair(7, 3));
+    List<Pair> Lshape = List.of(new Pair(7, 1), new Pair(7, 2), new Pair(7, 3), new Pair(8, 3));
+    List<Pair> Tshape = List.of(new Pair(7, 1), new Pair(7, 2), new Pair(7, 3), new Pair(8, 2));
+    List<Pair> Zshape = List.of(new Pair(8, 1), new Pair(8, 2), new Pair(7, 2), new Pair(7, 3));
+    List<Pair> Sshape = List.of(new Pair(7, 1), new Pair(7, 2), new Pair(8, 2), new Pair(8, 3));
 
     public Blocks() {
-        this.type = getRandomType();
-        this.currentShape = getShape(this.type);
+        this.currentType = getRandomType();
+        this.currentShape = getShape(this.currentType).getShape();
+        this.currentColor = getShape(this.currentType).getColor();
+        this.nextType = getRandomType();
+        while (currentType.equals(nextType)){
+            this.nextType = getRandomType();
+        }
+        this.nextShape = getShape(this.nextType).getShape();
+        this.nextColor = getShape(this.nextType).getColor();
 
     }
     public String getRandomType(){
@@ -30,33 +38,30 @@ public class Blocks {
     }
 
     public List<Pair> getNewShape(){
+        this.currentShape = this.nextShape;
+        this.currentColor = this.nextColor;
         Blocks blocks = new Blocks();
-        return blocks.currentShape;
+        this.nextShape = blocks.currentShape;
+        this.nextColor = blocks.currentColor;
+        return this.currentShape;
     }
 
-    public List<Pair> getShape(String type) {
+    public Pair getShape(String type) {
         switch (type){
             case "I":
-                this.color = Color.GREEN;
-                return Ishape;
+                return new Pair(Color.GREEN, Ishape);
             case "J":
-                this.color = Color.CYAN;
-                return Jshape;
+                return new Pair(Color.CYAN, Jshape);
             case "O":
-                this.color = Color.ORANGE;
-                return Oshape;
+                return new Pair(Color.ORANGE, Oshape);
             case "T":
-                this.color = Color.RED;
-                return Tshape;
+                return new Pair(Color.RED, Tshape);
             case "Z":
-                this.color = Color.YELLOW;
-                return Zshape;
+                return new Pair(Color.YELLOW, Zshape);
             case "L":
-                this.color = Color.PINK;
-                return Lshape;
+                return new Pair(Color.PINK, Lshape);
             case "S":
-                this.color = Color.BLUE;
-                return Sshape;
+                return new Pair(Color.BLUE, Sshape);
             default:
                 return null;
         }
@@ -64,7 +69,7 @@ public class Blocks {
 
 
     public List<Pair> Rotate() {
-        if (type.equals("O"))
+        if (currentType.equals("O"))
             return currentShape;
 
         List<Pair> rotatedShape = new ArrayList<>();
