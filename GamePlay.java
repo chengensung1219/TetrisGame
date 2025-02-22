@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GamePlay extends JPanel {
+    // Enum to manage the game states
     enum GameState {
         WELCOME, RUNNING, PAUSE, GAMEOVER
     }
@@ -22,20 +23,24 @@ public class GamePlay extends JPanel {
     private int speed = 0;
 
     public GamePlay() {
+        // Add keyboard event listener to handle player input
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
-
+                // Start the game when space is pressed
                 if (keyCode == KeyEvent.VK_SPACE) {
                     gameState = GameState.RUNNING;
                 }
+                // Toggle pause when 'P' is pressed
                 if (keyCode == KeyEvent.VK_P) {
                     togglePause();
                 }
+                // Restart game when 'R' is pressed and game is over
                 if (keyCode == KeyEvent.VK_R && gameState == GameState.GAMEOVER) {
                     restartGame();
                 }
+                // Handle movement controls when the game is running
                 if (gameState == GameState.RUNNING) {
                     if (canMoveLeft()){
                         switch (keyCode) {
@@ -67,35 +72,39 @@ public class GamePlay extends JPanel {
                             default:
                                 break;
                         }
-                        repaint();
+                        repaint();  // Redraw after movement
                     }
                 }
             }
         });
         setFocusable(true);
 
+        // Initialize game timer to control block dropping speed
         timer = new Timer(600 - speed, e -> {
             if (gameState == GameState.RUNNING) {
                 if (!canMoveDown()) {
+                    // Place block if it can't move down further
                     blocks.baseBlocks.addAll(blocks.currentShape);
                     blocks.currentShape = blocks.getNewShape();
                 } else {
+                    // Move the block down if possible
                     blocks.currentShape.forEach(pair ->
                             pair.setY(pair.getY() + 1));
                     repaint();
                 }
-
+                // Check if game is over
                 if (gameOver()){
                     gameState = GameState.GAMEOVER;
                     repaint();
                 }
+                // Remove completed rows
                 eliminateBlocks();
             }
 
         });
         timer.start();
     }
-
+    // Toggles between running and paused states
     private void togglePause() {
         if (gameState == GameState.RUNNING) {
             gameState = GameState.PAUSE;
@@ -106,7 +115,7 @@ public class GamePlay extends JPanel {
             timer.start();
         }
     }
-
+    // Checks if the block can move downward
     private boolean canMoveDown() {
         for (Pair p : blocks.currentShape) {
 
@@ -122,7 +131,7 @@ public class GamePlay extends JPanel {
         return true;
     }
     private boolean canMoveLeft() {
-
+        // Checks if the block can move left
         for (Pair p : blocks.currentShape) {
             if (p.getX()  <= 1) {
                 return false;
@@ -136,7 +145,7 @@ public class GamePlay extends JPanel {
         return true;
     }
     private boolean canMoveRight() {
-
+        // Checks if the block can move right
         for (Pair p : blocks.currentShape) {
             if (p.getX() >= col) {
                 return false;
@@ -163,6 +172,7 @@ public class GamePlay extends JPanel {
             }
         }
     }
+    // Ensures the block rotation stays within bounds
     private void eliminateBlocks() {
         List<Integer> eliminate = new ArrayList<>();
 
@@ -192,6 +202,8 @@ public class GamePlay extends JPanel {
             }
         }
     }
+    // Removes a row and shifts blocks above downward
+
     private void removeRow(int row) {
         // Remove all blocks in the specified row
         blocks.baseBlocks.removeIf(pair -> pair.getY() == row);
@@ -203,6 +215,8 @@ public class GamePlay extends JPanel {
             }
         }
     }
+
+    // Checks if game over condition is met
     private boolean gameOver() {
         for (Pair p : blocks.currentShape) {
             for (Pair base : blocks.baseBlocks) {
@@ -214,6 +228,7 @@ public class GamePlay extends JPanel {
         return false;
     }
 
+    //Resets the game state for a new round
     private void restartGame(){
         gameState = GameState.RUNNING;
 
@@ -228,7 +243,7 @@ public class GamePlay extends JPanel {
         repaint();
     }
 
-
+    // Display the view
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -252,7 +267,7 @@ public class GamePlay extends JPanel {
             g.drawString("to start", 320, 370);
 
         }
-
+        // Game Running
         if (this.gameState == GameState.RUNNING) {
             g.setColor(Color.LIGHT_GRAY);
             g.fillRoundRect(squareSize, squareSize, col * squareSize, (row - 3) * squareSize, 8, 8);
@@ -318,6 +333,7 @@ public class GamePlay extends JPanel {
             g.drawString("PAUSED", 200, 350);
         }
 
+        // Game Over View
         if (this.gameState == GameState.GAMEOVER) {
 
             g.setColor(Color.LIGHT_GRAY);
