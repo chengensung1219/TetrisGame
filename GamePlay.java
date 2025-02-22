@@ -72,8 +72,8 @@ public class GamePlay extends JPanel {
                 }
             }
         });
-
         setFocusable(true);
+
         timer = new Timer(600 - speed, e -> {
             if (gameState == GameState.RUNNING) {
                 if (!canMoveDown()) {
